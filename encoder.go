@@ -10,7 +10,9 @@ import (
 )
 
 /*
-#cgo pkg-config: opus
+#cgo LDFLAGS: -L${SRCDIR}/lib -lopus
+#cgo CPPFLAGS: -I${SRCDIR}/include/opus
+//#cgo pkg-config: opus
 #include <opus.h>
 
 int
