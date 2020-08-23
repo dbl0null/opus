@@ -1,4 +1,4 @@
-[![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
+[![Test](https://github.com/hraban/opus/workflows/Test/badge.svg)](https://github.com/hraban/opus/actions?query=workflow%3ATest)
 
 ## Go wrapper for Opus
 
@@ -108,16 +108,12 @@ for i := 0; i < n; i++ {
 }
 ```
 
-Note regarding Forward Error Correction (FEC):
-> When a packet is considered "lost", `DecodeFEC` and `DecodeFECFloat32` methods
-> can be called on the next packet in order to try and recover some of the lost
-> data. The PCM needs to be exactly the duration of audio that is missing.
-> `LastPacketDuration()` can be used on the decoder to get the length of the
-> last packet.
-> Note also that in order to use this feature the encoder needs to be configured
-> with `SetInBandFEC(true)` and `SetPacketLossPerc(x)` options.
+To handle packet loss from an unreliable network, see the
+[DecodePLC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodePLC) and
+[DecodeFEC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodeFEC)
+options.
 
-### Streams (and files)
+### Streams (and Files)
 
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
@@ -162,7 +158,7 @@ https://www.opus-codec.org/docs/opus_api-1.1.3/
 
 For more examples, see the `_test.go` files.
 
-## Build & installation
+## Build & Installation
 
 This package requires libopus and libopusfile development packages to be
 installed on your system. These are available on Debian based systems from
@@ -178,6 +174,25 @@ sudo apt-get install pkg-config libopus-dev libopusfile-dev
 Mac:
 ```sh
 brew install pkg-config opus opusfile
+```
+
+### Building Without `libopusfile`
+
+This package can be built without `libopusfile` by using the build tag `nolibopusfile`.
+This enables the compilation of statically-linked binaries with no external
+dependencies on operating systems without a static `libopusfile`, such as
+[Alpine Linux](https://pkgs.alpinelinux.org/contents?branch=edge&name=opusfile-dev&arch=x86_64&repo=main).
+
+**Note:** this will disable all file and `Stream` APIs.
+
+To enable this feature, add `-tags nolibopusfile` to your `go build` or `go test` commands:
+
+```sh
+# Build
+go build -tags nolibopusfile ...
+
+# Test
+go test -tags nolibopusfile ./...
 ```
 
 ### Using in Docker
